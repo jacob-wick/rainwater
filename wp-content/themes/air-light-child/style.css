@@ -1,0 +1,429 @@
+/*
+Theme Name: Air-light Child
+Theme URI: https://github.com/digitoimistodude/air-light
+Author: Digitoimisto Dude Oy
+Author URI: https://www.dude.fi
+Template: air-light
+Description: A minimalist WordPress starter theme.
+Version: 4.2.6
+License: MIT License
+License URI: https://github.com/digitoimistodude/air-light/blob/master/LICENSE.md
+Text Domain: air-light
+Tags: one-column, accessibility-ready, translation-ready
+*/
+
+
+/* Global Styles */
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	font-family: "Averia Serif Libre", Karla, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+a {
+	color: #222;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #af5074;
+	border-bottom: none;
+}
+
+.content-area .button, a[href*="#page"], a[href*="#page"]:hover {
+	background: #af5074;
+}
+
+.content-area .button:hover {
+	background: #f7ec73;
+}
+
+.content-area input[type=button] {
+	background: #af5074;
+}
+
+a[href*="#page"] {
+	color: #fff;
+}
+
+.divider {
+	height: 1px;
+	max-width: 34%;
+	margin: 0 auto;
+	border-bottom: 3px solid #af5074;
+}
+
+.container a, .entry-content a {
+	text-decoration: none;
+	border-bottom: 2px solid #f7ec73;
+}
+
+.container a:hover, .entry-content a:hover {
+}
+
+/* Header Styles */
+
+.nav-container-header {
+	border-bottom: 5px solid #f7ec73;
+}
+
+.site-header {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.header-title {
+	font-family: 'Codystar', Karla, Helvetica, sans-serif;
+	font-size: 4rem;
+	color: #af5074;
+}
+
+.nav-primary .menu-item a:hover {
+	color: #af5074;
+}
+
+/* Front Page Styles */
+
+.block-front {
+	display: none;
+}
+
+.page-id-6 h2 {
+	margin-top: 0;
+}
+
+div.front-top {
+	background: url('images/barrels.jpg') no-repeat fixed center right / cover;
+	font-weight: 700;
+	color: #fff;
+}
+
+.front-top p {
+	margin: 0 auto;
+	padding: 1rem 0;
+	font-size: 5rem;
+	max-width: 960px;
+}
+
+.front-block, .front-block-below {
+	padding: 2rem 0;
+}
+
+.front-block li:nth-child(2), .front-block li:nth-child(3) {
+	margin-top: 1rem;
+}
+
+.front-block li:before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+}
+
+.front-block li:nth-child(1):before {
+	content: "\f7b6  ";
+}
+
+.front-block li:nth-child(2):before {
+	content: "\f7a0  ";
+}
+
+.front-block li:nth-child(3):before {
+	content: "\f79f  ";
+}
+
+.front-foto {
+	background: url('images/grapes.jpg') no-repeat fixed center / cover;
+	min-height: 20vh;
+}
+
+/* About Page Styles */
+
+.page-id-18 .block {
+	background: url('images/whiskey-tasting.jpg') no-repeat fixed bottom right / cover !important;
+}
+
+.page-id-18 img {
+	border-radius: 50%;
+}
+
+.page-id-18 ul, li {
+	list-style: none;
+}
+
+.page-id-18 .container {
+	font-family: 'Averia Serif Libre', Arial, sans-serif;
+}
+
+.page-id-18 .entry-content p {
+	font-size: 2rem;
+}
+
+.page-id-18 section {
+	margin-bottom: 2rem;
+	padding: 2rem 0;
+}
+
+.why-wp li::before {
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+}
+
+.why-wp li:nth-child(1)::before {
+	content: "\f023";
+}
+
+.why-wp li:nth-child(2)::before {
+	content: "\f6e8";
+}
+
+.why-wp li:nth-child(3)::before {
+	content: "\f587";
+}
+
+.why-wp li {
+	padding-left: 1rem;
+}
+
+.about-button {
+	margin: 0 auto;
+	text-align: center;
+	max-width: 60%;
+}
+
+.creative-research {
+	background: #fff;
+	color: inherit;
+}
+
+.why-wp, .bio {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: space-between;
+}
+
+/* Services Page Styles */
+
+.page-id-22 .block:nth-child(1){
+	display: none;
+}
+
+.page-id-22 .block-page {
+	background: url('images/vineyard-panorama.jpg') no-repeat fixed center / cover;
+}
+
+section.page-services {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: flex-start;
+	justify-content: space-around;
+	margin-bottom: 4rem;
+}
+
+.individual-service {
+	max-width: 30%;
+}
+
+/* Individual Case Studies Page */
+
+.block-case_studies {
+	background: url('images/beer-snifter.jpg') no-repeat fixed bottom right / cover !important;
+}
+
+.single-case_studies .block-case_studies {
+	display: none;
+}
+
+.single-case_studies .entry-header {
+	margin-bottom: 2rem;
+}
+
+.single-case_studies .entry-footer p {
+	margin-top: 0.25rem;
+	margin-bottom: 0.5rem;
+}
+
+.summary p {
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+h3.services, h4.client {
+	margin: 0rem;
+}
+
+.services:before {
+	content: "Services:  ";
+}
+
+.client:before {
+	content: "Client:  ";
+}
+
+span.site-link {
+	margin-bottom: 1rem;
+}
+
+section.images-1, section.images-2 {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	text-align: center;
+	width: 100%;
+	align-items: center;
+	padding: 2rem 0 2rem 0;
+}
+
+.individual-images img {
+	padding: 1rem;
+	max-width: 42%;
+}
+
+/* Portfolio Page */
+
+.post-type-archive-case_studies article {
+	display: flex;
+	flex-flow: row nowrap;
+	align-itmes: flex-end;
+	justify-content: space-between;
+}
+
+.portfolio-block-1, .portfolio-block-2 {
+	max-width: 48%;
+}
+
+/* Contact Page */
+
+.page-id-20 .block-page {
+	background: url('images/latte-art.jpg') no-repeat fixed center / cover !important;
+}
+
+/* Footer Styles */
+
+.site-footer {
+	background: #f7ec73;
+}
+
+.site-footer a::before {
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  width: 2.4rem;
+  height: 2.4rem;
+  text-align: center;
+  font-family: "Font Awesome 5 Brands";
+  font-weight: 400;
+  font-size: 1.6rem;
+  color: #fff;
+  background: #af5074;
+  border-radius: 50%;
+}
+
+.social-media-navigation {
+	max-width: 960px;
+	margin: 0 auto;
+}
+
+ul.social-media-menu {
+	display: flex;
+	justify-content: flex-start;
+	list-style: none;
+}
+
+.social-media-menu li {
+	padding: 0.2rem;
+}
+
+.social-media-menu a[href*="facebook"]::before {
+	content: "\f39e";
+}
+
+.social-media-menu a[href*="twitter"]::before {
+	content: "\f099";
+}
+
+.social-media-menu a[href*="linkedin"]::before {
+	content: "\f0e1";
+}
+
+/* Media Adjusts */
+
+@media (min-height: 1000px) {
+	.front {
+		max-height: 40vh;
+	}
+}
+
+@media (max-width: 1000px) {
+	.front-top p {
+		max-width: 90%;
+	}
+
+	.about-button {
+		max-width: 80%;
+	}
+}
+
+@media (max-width: 1000px) {
+	.front-top p {
+		font-size: 4rem;
+	}
+}
+
+@media (min-width: 600px) {
+	.why-wp .left-content, .bio .right-content {
+		max-width: 65%;
+	}
+
+	.why-wp .right-content, .bio .left-content {
+		max-width: 30%;
+	}
+}
+
+@media (max-width: 600px) {
+	.front-top p {
+		font-size: 3.1rem;
+	}
+
+	.why-wp, .bio {
+		flex-flow: column-reverse nowrap;
+	}
+
+	.why-wp .left-content {
+		background: url('images/wordpress.png') no-repeat scroll center right / 34%;
+	}
+
+	.why-wp .right-content {
+		display: none;
+	}
+
+	section.page-services {
+		flex-flow: column nowrap;
+	}
+
+	.individual-service {
+		max-width: 960px;
+	}
+}
+
+@media (max-width: 400px) {
+	.front-top p {
+		font-size: 2.4rem;
+	}
+
+	.why-wp .left-content {
+		background: none;
+	}
+
+}
+
+@media (min-width: 2125px) {
+  .front-top p {
+    font-size: 68px;
+  }
+}
+
