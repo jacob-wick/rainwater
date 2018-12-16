@@ -1,0 +1,6 @@
+# Ignore the following
+.DS_Store
+.htaccess
+wp-config.php
+wp-content/uploads
+wp-content/themes/air-light-child/images
