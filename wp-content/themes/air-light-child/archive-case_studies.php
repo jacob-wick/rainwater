@@ -32,8 +32,8 @@ get_template_part( 'template-parts/hero', get_post_type() ); ?>
       ?>
 
 				<article id="post-<?php the_ID(); ?> archive" <?php post_class(); ?>>
-				  <header class="entry-header portoflio-block-1">
-				    <?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+				  <header class="entry-header portfolio-block-1">
+				    <a href="<?php the_permalink() ?>" target="_blank"><?php the_title( '<h1 class="entry-title">', '</h1>' ); ?></a>
 				    <h3 class="client"><?php echo $client ?></h3>
 				    <h4 class="services"><?php echo $services ?></h4>
 				    <span><a href="<?php the_permalink() ?>" target="_blank">See more</a></span>
@@ -41,7 +41,7 @@ get_template_part( 'template-parts/hero', get_post_type() ); ?>
 
 				  <div class="portfolio-block-2">
 					<figure>
-						<?php echo wp_get_attachment_image($image_1, $size); ?>
+						<a href="<?php the_permalink() ?>" target="_blank"><?php echo wp_get_attachment_image($image_1, $size); ?></a>
 					</figure> 
 				  </div>
 				

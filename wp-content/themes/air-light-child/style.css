@@ -401,12 +401,12 @@ ul.social-media-menu {
 		display: none;
 	}
 
-	section.page-services {
+	section.page-services, .post-type-archive-case_studies article, section.images-1, section.images-2 {
 		flex-flow: column nowrap;
 	}
 
-	.individual-service {
-		max-width: 960px;
+	.individual-service, .portfolio-block-1, .portfolio-block-2, .individual-images img {
+		max-width: 90%;
 	}
 }
 
