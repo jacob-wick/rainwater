@@ -103,7 +103,7 @@ div.front-top {
 
 .front-top p {
 	margin: 0 auto;
-	padding: 1rem 0;
+	padding: 1.3rem 0;
 	font-size: 5rem;
 	max-width: 960px;
 }
@@ -136,6 +136,10 @@ div.front-top {
 .front-foto {
 	background: url('images/grapes.jpg') no-repeat fixed center / cover;
 	min-height: 20vh;
+}
+
+.sticky-element-active {
+	width: 100%;
 }
 
 /* About Page Styles */
@@ -304,9 +308,38 @@ section.images-1, section.images-2 {
 
 .site-footer {
 	background: #f7ec73;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
 }
 
-.site-footer a::before {
+.site-footer a:hover {
+	color: #af5074;
+}
+
+
+.site-footer h2.widget-title {
+	font-size: 1.8rem;
+	margin-bottom: 0.2rem;
+}
+
+.site-footer ul {
+	list-style: none;
+	margin-top: 0.2rem;
+	padding: 0;
+}
+
+.site-footer li {
+	font-size: 1.5rem;
+}
+
+.menu-social-media-nav-container ul {
+	display: flex;
+	justify-content: flex-start;
+	list-style: none;
+}
+
+.menu-social-media-nav-container a::before {
   display: inline-block;
   font-style: normal;
   font-variant: normal;
@@ -323,31 +356,33 @@ section.images-1, section.images-2 {
   border-radius: 50%;
 }
 
-.social-media-navigation {
-	max-width: 960px;
-	margin: 0 auto;
-}
-
-ul.social-media-menu {
-	display: flex;
-	justify-content: flex-start;
-	list-style: none;
+#menu-social-media-nav .menu-item a:hover:before {
+	background: none;
+	color: #af5074;
 }
 
 .social-media-menu li {
 	padding: 0.2rem;
 }
 
-.social-media-menu a[href*="facebook"]::before {
+.menu-social-media-nav-container a[href*="facebook"]::before {
 	content: "\f39e";
 }
 
-.social-media-menu a[href*="twitter"]::before {
+.menu-social-media-nav-container a[href*="instagram"]::before {
+	content: "\f16d";
+}
+
+.menu-social-media-nav-container a[href*="twitter"]::before {
 	content: "\f099";
 }
 
-.social-media-menu a[href*="linkedin"]::before {
+.menu-social-media-nav-container a[href*="linkedin"]::before {
 	content: "\f0e1";
+}
+
+.site-footer .search-submit {
+	display: none;
 }
 
 /* Media Adjusts */
