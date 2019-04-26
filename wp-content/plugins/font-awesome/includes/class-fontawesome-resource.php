@@ -1,4 +1,5 @@
 <?php
+namespace FortAwesome;
 
 if ( ! class_exists( 'FontAwesome_Resource' ) ) :
 	/**
@@ -6,17 +7,17 @@ if ( ! class_exists( 'FontAwesome_Resource' ) ) :
 	 * to be used when enqueuing a script or style resource.
 	 */
 	class FontAwesome_Resource {
-		protected $_source;
-		protected $_integrity_key;
+		protected $source;
+		protected $integrity_key;
 
 		public function __construct( $source, $integrity_key ) {
-			$this->_source        = $source;
-			$this->_integrity_key = $integrity_key;
+			$this->source        = $source;
+			$this->integrity_key = $integrity_key;
 		}
 
 		public function source() {
-			return $this->_source; }
+			return $this->source; }
 		public function integrity_key() {
-			return $this->_integrity_key; }
+			return $this->integrity_key; }
 	}
 endif; // !class_exists

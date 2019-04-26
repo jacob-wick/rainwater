@@ -1,9 +1,9 @@
 === Font Awesome ===
 Contributors: fontawesome, mlwilkerson, robmadole, rachelbaker
-Stable tag: 4.0.0-rc6
+Stable tag: 4.0.0-rc9
 Tags: font, awesome, fontawesome, font-awesome, icon, svg, webfont
 Requires at least: 4.7
-Tested up to: 5.0
+Tested up to: 5.1.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -118,7 +118,7 @@ Here's what you can currently configure on the admin settings page:
 
   [Font Awesome Pro](https://fontawesome.com/pro) gets you lots more icons, services, and support, and a steady stream of new icons when you have an active subscription. One of those Pro services is our Pro CDN. To load Font Awesome from the Pro CDN, including all the Pro icons, check "Use Pro" on the admin settings page.
 
-  You'll need to first make sure you've configured your [allowed CDN domains in your fontawesome.com account settings](https://fontawesome.com/account/domains).
+  You'll need to first make sure you've configured your [allowed CDN domains in your fontawesome.com account settings](https://fontawesome.com/account/cdn).
 
 - Remove Unregistered Clients
 
@@ -143,6 +143,8 @@ For example, if you install a plugin that requires the svg method, then as long 
 If you've been a user of previous versions of this plugin, you'll eventually need to update your `[icon]` shortcodes to use Font Awesome 5 names instead of the out-dated Font Awesome 3 names used with the old plugin.
 
 We've tried to smooth the upgrade path for you by keeping that shortcode compatible with Font Awesome 3 names you're used to, while magically transforming them into their Font Awesome 5 equivalents on the fly. You'll still need to change your icon shortcodes in pages, posts, and templates. But our upgrade magic gives you some cushion to take a more leisurely pace. We plan to remove version 3 naming support, and the magic, from this plugin in upcoming releases, though, so don't wait too long!
+
+Note that this automatic translation of version 3 icon names to version 5 icon names will only occur where you've used the `[icon]` shortcode. If you've directly used `<i>` tags to reference version 3 icons, like `<i class="icon-calendar"></i>`, you'll need to manually revise those to use version 5 names.
 
 == See Also ==
 
@@ -183,6 +185,26 @@ Find the Font Awesome admin settings page either under the "Settings" menu on th
 [Font Awesome Pro](https://fontawesome.com/pro) subscribers who want to enable Pro icons on their WordPress sites, must first [add their allowed domains](https://fontawesome.com/account/domains) before enabling the "Use Pro" option on the plugin's settings page.
 
 == Changelog ==
+
+= 4.0.0-rc9 =
+
+* Enhance Font Awesome version 4 compatibility: add shimming of the version 4 font-family to enable version 4
+  icons defined as pseudo-elements to be rendered via the version of Font Awesome 5 loaded by this plugin.
+
+* Add warnings to the admin UI to indicate that using svg and pseudo-elements may result in slow performance,
+  and that svg with pseudo-elements and version 4 compatibility is not supported at all.
+
+= 4.0.0-rc8 =
+
+* Remove dependence on third party libraries, eliminating a class of potential conflicts with other plugins.
+
+* Breaking changes to the API used by theme and plugin developers (no breaking changes for WordPress site owners).
+  See [commit log](https://github.com/FortAwesome/wordpress-fontawesome/commit/80f973b4a0f6ac09cbb4dc3ecc1ae2964ef01d32)
+
+= 4.0.0-rc7 =
+
+* Fix detection and removal of unregistered clients by changing the internal resource name this plugin uses to enqueue its resource.
+  Change it to something unlikely to be used by other themes or plugins.
 
 = 4.0.0-rc6 =
 

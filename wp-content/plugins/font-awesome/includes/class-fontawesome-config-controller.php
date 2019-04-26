@@ -1,4 +1,10 @@
 <?php
+namespace FortAwesome;
+
+require_once trailingslashit( FONTAWESOME_DIR_PATH ) . 'includes/class-fontawesome-configurationexception.php';
+
+use \WP_REST_Controller, \WP_REST_Response, \WP_Error, \Exception, \ReflectionMethod;
+
 /**
  * Module for this plugin's Configuration REST API controller
  *
@@ -10,7 +16,7 @@
  * @ignore
  */
 
-if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
+if ( ! class_exists( 'FortAwesome\FontAwesome_Config_Controller' ) ) :
 
 	/**
 	 * Controller class for REST endpoint
@@ -76,6 +82,23 @@ if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
 			$options          = $fa->options();
 			$locked_load_spec = isset( $options['lockedLoadSpec'] ) ? $options['lockedLoadSpec'] : false;
 
+			/**
+			 * Calling wp_head() is required to trigger the 'wp_enqueue_scripts' action and detection of unregistered clients.
+			 * Note that this can only possibly detect those clients who enqueue their styles or scripts within the context
+			 * of the controller action that invokes this function.
+			 * It's possible than some unregistered client enqueues a style or script in some other circumstance. We
+			 * would not detect that here, but since _removal_ of unregistered clients would happen on any page load,
+			 * it would still be removed. So, in that case, you'd have an unregistered client that this plugin removes
+			 * at the right time, but which does not get reported here. If we wanted to be more sophisticated about
+			 * all of this, we'd have to come up with a way to be more comprehensive about detection, such as
+			 * caching in a transient any unregistered clients on any page load. Then, FontAwesome::unregistered_clients()
+			 * could return that--what may have been detected across any number of page loads--instead of only that
+			 * which is detected on the same page load for which FontAwesome::unregistered_clients() is queried.
+			 */
+			ob_start();
+			wp_head();
+			ob_end_clean();
+
 			return array(
 				'adminClientInternal'   => FontAwesome::ADMIN_USER_CLIENT_NAME_INTERNAL,
 				'adminClientExternal'   => FontAwesome::ADMIN_USER_CLIENT_NAME_EXTERNAL,
@@ -87,13 +110,11 @@ if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
 				'currentLoadSpec'       => $fa->load_spec(),
 				'currentLoadSpecLocked' => $locked_load_spec && $fa->load_spec() === $locked_load_spec,
 				'unregisteredClients'   => $fa->unregistered_clients(),
-				'releaseProviderStatus' => fa_release_provider()->get_status(),
+				'releaseProviderStatus' => $this->release_provider()->get_status(),
 				'releases'              => array(
 					'available'        => $fa->get_available_versions(),
 					'latest_version'   => $fa->get_latest_version(),
-					'latest_semver'    => $fa->get_latest_semver(),
 					'previous_version' => $fa->get_previous_version(),
-					'previous_semver'  => $fa->get_previous_semver(),
 				),
 			);
 		}
@@ -120,11 +141,11 @@ if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
 				$fa = fa();
 
 				// Make sure our releases metadata is fresh.
-				$load_releases = new ReflectionMethod( 'FontAwesome_Release_Provider', 'load_releases' );
+				$load_releases = new ReflectionMethod( 'FortAwesome\FontAwesome_Release_Provider', 'load_releases' );
 				$load_releases->setAccessible( true );
-				$load_releases->invoke( fa_release_provider() );
+				$load_releases->invoke( $this->release_provider() );
 
-				$fa_load = new ReflectionMethod( 'FontAwesome', 'load' );
+				$fa_load = new ReflectionMethod( 'FortAwesome\FontAwesome', 'load' );
 				$fa_load->setAccessible( true );
 				$fa_load->invoke( $fa );
 
@@ -159,13 +180,13 @@ if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
 				// the error condition to the admin UI.
 				// We reset to avoid duplication client registrations.
 				$fa      = fa();
-				$load_fa = new ReflectionMethod( 'FontAwesome', 'load' );
+				$load_fa = new ReflectionMethod( 'FortAwesome\FontAwesome', 'load' );
 				$load_fa->setAccessible( true );
-				$new_load_spec = $load_fa->invoke( $fa, $item['options'] );
+				$load_spec_success = $load_fa->invoke( $fa, $item['options'] );
 
 				$return_data = $this->build_item( $fa );
 
-				if ( $new_load_spec ) {
+				if ( $load_spec_success ) {
 					return new WP_REST_Response( $return_data, 200 );
 				} else {
 					return new WP_Error(
@@ -174,6 +195,8 @@ if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
 						array( 'status' => 403 )
 					);
 				}
+			} catch ( FontAwesome_ConfigurationException $e ) {
+				return new WP_Error( 'cant_update', $e->getMessage(), array( 'status' => 400 ) );
 			} catch ( Exception $e ) {
 				return new WP_Error( 'cant_update', 'Whoops, the attempt to update options failed.', array( 'status' => 500 ) );
 			} catch ( Error $error ) {
@@ -188,6 +211,16 @@ if ( ! class_exists( 'FontAwesome_Config_Controller' ) ) :
 		protected function prepare_item_for_database( $request ) {
 			$body = $request->get_json_params();
 			return array_merge( array(), $body );
+		}
+
+		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+		/**
+		 * Allows a test subclass to mock the release provider.
+		 *
+		 * @ignore
+		 */
+		protected function release_provider() {
+			return fa_release_provider();
 		}
 	}
 

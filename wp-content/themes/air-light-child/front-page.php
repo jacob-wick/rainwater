@@ -30,11 +30,6 @@ get_template_part( 'template-parts/hero', get_post_type() ); ?>
 
 		<div class="front-top">	  	
 			<?php the_content();
-
-				wp_link_pages( array(
-			    'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'air-light' ),
-		        'after'  => '</div>',
-				) );
 			?>		 
 		 </div>
 
@@ -97,4 +92,4 @@ get_template_part( 'template-parts/hero', get_post_type() ); ?>
 	</main><!-- #main -->
 </div><!-- #primary -->
 
-<?php get_footer();
+<?php get_footer(); ?>

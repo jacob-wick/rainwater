@@ -1,4 +1,8 @@
 <?php
+namespace FortAwesome;
+
+use \WP_Error, \Error, \Exception, \InvalidArgumentException;
+
 /**
  * Provides metadata about Font Awesome releases.
  *
@@ -12,15 +16,13 @@
 
 require_once trailingslashit( FONTAWESOME_DIR_PATH ) . 'includes/class-fontawesome-resource.php';
 require_once trailingslashit( FONTAWESOME_DIR_PATH ) . 'includes/class-fontawesome-noreleasesexception.php';
-
-use Composer\Semver\Semver;
-use GuzzleHttp\Client;
+require_once trailingslashit( FONTAWESOME_DIR_PATH ) . 'includes/class-fontawesome-configurationexception.php';
 
 /**
  * Provides metadata about Font Awesome releases by querying fontawesome.com.
  *
- * @package    FontAwesome
- * @subpackage FontAwesome/includes
+ * Theme and plugin developers normally should _not_ access this Release Provider API directly. It's here to support the
+ * functionality of {@see FontAwesome}.
  */
 class FontAwesome_Release_Provider {
 	/**
@@ -43,39 +45,25 @@ class FontAwesome_Release_Provider {
 	/**
 	 * @ignore
 	 */
-	protected $_releases = null;
+	protected $releases = null;
 
 	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 	/**
 	 * @ignore
 	 */
-	protected $_status = null;
+	protected $status = null;
 
 	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 	/**
 	 * @ignore
 	 */
-	protected $_api_client = null;
+	protected $api_client = null;
 
 	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
 	/**
 	 * @ignore
 	 */
-	protected static $_instance = null;
-
-	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-	/**
-	 * @ignore
-	 */
-	protected static $_handler = null;
-
-	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
-	/**
-	 * @ignore
-	 */
-	public static function set_handler( $handler ) {
-		self::$_handler = $handler;
-	}
+	protected static $instance = null;
 
 	/**
 	 * Returns the FontAwesome_Release_Provider singleton instance.
@@ -83,10 +71,10 @@ class FontAwesome_Release_Provider {
 	 * @return FontAwesome_Release_Provider
 	 */
 	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -96,7 +84,7 @@ class FontAwesome_Release_Provider {
 	 * @return FontAwesome_Release_Provider
 	 */
 	public static function reset() {
-		self::$_instance = null;
+		self::$instance = null;
 		return self::instance();
 	}
 
@@ -116,12 +104,12 @@ class FontAwesome_Release_Provider {
 	 * The value of the `code` key is one of:
 	 * - `200` if successful,
 	 * - `0` if there was some code error that prevented the network request from completing
-	 * - otherwise some HTTP error code as returned by {@see \Guzzle\Client}
+	 * - otherwise some HTTP error code as returned by `wp_remote_get()`
 	 *
 	 * @return array|null
 	 */
 	public function get_status() {
-		return $this->_status;
+		return $this->status;
 	}
 
 	/**
@@ -130,21 +118,10 @@ class FontAwesome_Release_Provider {
 	 * @ignore
 	 */
 	private function __construct() {
-		$client_params = array(
-			// Base URI is used with relative requests.
-			'base_uri' => FONTAWESOME_API_URL,
-			// You can set any number of default request options.
-			'timeout'  => 2.0,
-		);
-		if ( self::$_handler ) {
-			$client_params['handler'] = self::$_handler;
-		}
-		$this->_api_client = new Client( $client_params );
-
 		$cached_releases = get_transient( self::RELEASES_TRANSIENT );
 
 		if ( $cached_releases ) {
-			$this->_releases = $cached_releases;
+			$this->releases = $cached_releases;
 		}
 	}
 
@@ -175,18 +152,25 @@ class FontAwesome_Release_Provider {
 		);
 
 		try {
-			$response = $this->_api_client->get( 'api/releases' );
+			$response = $this->get( FONTAWESOME_API_URL . '/api/releases' );
 
-			$this->_status = array_merge(
+			if ( $response instanceof WP_Error ) {
+				throw new Error();
+			}
+
+			$this->status = array_merge(
 				$init_status,
 				array(
-					'code'    => $response->getStatusCode(),
-					'message' => 'ok',
+					'code'    => $response['response']['code'],
+					'message' => $response['response']['message'],
 				)
 			);
 
-			$body          = $response->getBody();
-			$body_contents = $body->getContents();
+			if ( 200 !== $this->status['code'] ) {
+				return;
+			}
+
+			$body_contents = $response['body'];
 			$body_json     = json_decode( $body_contents, true );
 			$api_releases  = array_map( array( $this, 'map_api_release' ), $body_json['data'] );
 			$releases      = array();
@@ -207,44 +191,17 @@ class FontAwesome_Release_Provider {
 				throw new Exception();
 			}
 
-			$this->_releases = $releases;
-		} catch ( GuzzleHttp\Exception\ConnectException $e ) {
-			$this->_status = array_merge(
-				$init_status,
-				array(
-					'code'    => $e->getCode(),
-					'message' => 'Whoops, we could not connect to the Font Awesome server to get releases data.  ' .
-						'There seems to be an internet connectivity problem between your WordPress server ' .
-						'and the Font Awesome server.',
-				)
-			);
-		} catch ( GuzzleHttp\Exception\ServerException $e ) {
-			$this->_status = array_merge(
-				$init_status,
-				array(
-					'code'    => $e->getCode(),
-					'message' => 'Whoops, there was a problem on the fontawesome.com server when we attempted to get releases data.  ' .
-						'Probably if you reload to try again, it will work.',
-				)
-			);
-		} catch ( GuzzleHttp\Exception\ClientException $e ) {
-			$this->_status = array_merge(
-				$init_status,
-				array(
-					'code'    => $e->getCode(),
-					'message' => 'Whoops, we could not update the releases data from the Font Awesome server.',
-				)
-			);
+			$this->releases = $releases;
 		} catch ( Exception $e ) {
-			$this->_status = array_merge(
+			$this->status = array_merge(
 				$init_status,
 				array(
 					'code'    => 0,
 					'message' => 'Whoops, we failed to update the releases data.',
 				)
 			);
-		} catch ( \Error $e ) {
-			$this->_status = array_merge(
+		} catch ( Error $e ) {
+			$this->status = array_merge(
 				$init_status,
 				array(
 					'code'    => 0,
@@ -284,6 +241,14 @@ class FontAwesome_Release_Provider {
 		return( new FontAwesome_Resource( $full_url, $integrity_key ) );
 	}
 
+	// phpcs:ignore Generic.Commenting.DocComment.MissingShort
+	/**
+	 * @ignore
+	 */
+	protected function get( $url, $args = array() ) {
+		return wp_remote_get( $url, $args );
+	}
+
 	/**
 	 * Retrieves Font Awesome releases metadata with as few network requests as possible.
 	 *
@@ -301,36 +266,43 @@ class FontAwesome_Release_Provider {
 	 * @return array
 	 */
 	protected function releases() {
-		if ( $this->_releases ) {
-			return $this->_releases;
+		if ( $this->releases ) {
+			return $this->releases;
 		} else {
 			$cached_releases = get_transient( self::RELEASES_TRANSIENT );
 
 			if ( $cached_releases ) {
 				return $cached_releases;
-			} elseif ( is_null( $this->_releases ) ) {
+			} elseif ( is_null( $this->releases ) ) {
 				$this->load_releases();
 
 				// TODO: consider adding retry logic for loading Font Awesome releases.
-				if ( is_null( $this->_releases ) ) {
+				if ( is_null( $this->releases ) ) {
 					throw new FontAwesome_NoReleasesException();
 				} else {
-					return $this->_releases;
+					return $this->releases;
 				}
 			} else {
-				return $this->_releases;
+				return $this->releases;
 			}
 		}
 	}
 
 	/**
-	 * Returns a simple array of available Font Awesome versions as strings, sorted in descending semantic version order.
+	 * Returns a simple array of available Font Awesome versions as strings, sorted in descending version order.
 	 *
 	 * @throws FontAwesome_NoReleasesException
 	 * @return array
 	 */
 	public function versions() {
-		return Semver::rsort( array_keys( $this->releases() ) );
+		$versions = array_keys( $this->releases() );
+		usort(
+			$versions,
+			function( $first, $second ) {
+				return version_compare( $second, $first );
+			}
+		);
+		return $versions;
 	}
 
 	/**
@@ -349,6 +321,7 @@ class FontAwesome_Release_Provider {
 	 *         ['solid', 'regular', 'light', 'brands']
 	 * @param array  $flags boolean flags, defaults: array('use_pro' => false, 'use_svg' => false, 'use_shim' => true)
 	 * @throws InvalidArgumentException | FontAwesome_NoReleasesException
+	 * @throws FontAwesome_ConfigurationException
 	 * @return array
 	 */
 	public function get_resource_collection( $version, $style_opt, $flags = array(
@@ -358,10 +331,11 @@ class FontAwesome_Release_Provider {
 	) ) {
 		$resources = array();
 
-		if ( $flags['use_shim'] && ! $flags['use_svg'] && ! Semver::satisfies( $version, '>= 5.1.0' ) ) {
-			throw new InvalidArgumentException(
-				'A shim was requested for webfonts in Font Awesome version < 5.1.0, ' .
-				'but webfont shims were not introduced until version 5.1.0.'
+		if ( $flags['use_shim'] && ! $flags['use_svg'] && version_compare( '5.1.0', $version, '>' ) ) {
+			throw new FontAwesome_ConfigurationException(
+				'Whoops! You found a corner case here. ' .
+				'Version 4 compatibility for our webfont method was not introduced until Font Awesome 5.1.0. ' .
+				'Try using a newer version, disabling version 4 compatibility, or switch your method to SVG.'
 			);
 		}
 
@@ -424,7 +398,7 @@ class FontAwesome_Release_Provider {
 	 * Returns a version number corresponding to the most recent minor release.
 	 *
 	 * @throws FontAwesome_NoReleasesException
-	 * @return string|null most recent major.minor.patch version (not a semver). Returns null if no versions available.
+	 * @return string|null most recent major.minor.patch version. Returns null if no versions available.
 	 */
 	public function latest_minor_release() {
 		$sorted_versions = $this->versions();
@@ -435,7 +409,7 @@ class FontAwesome_Release_Provider {
 	 * Returns a version number corresponding to the minor release immediately prior to the most recent minor release.
 	 *
 	 * @throws FontAwesome_NoReleasesException
-	 * @return string|null latest patch level for the previous minor version. major.minor.patch version (not a semver).
+	 * @return string|null latest patch level for the previous minor version. major.minor.patch version.
 	 *         Returns null if there is no latest (and therefore no previous).
 	 *         Returns null if there's no previous, because the latest represents the only minor version in the set
 	 *           of available versions.
@@ -448,20 +422,23 @@ class FontAwesome_Release_Provider {
 			return null;
 		}
 
-		// Build a previous minor version semver.
+		// Build a major.minor version corresponding to the previous minor.
 		$version_parts    = explode( '.', $latest );
 		$new_minor_number = intval( $version_parts[1] ) - 1;
 		// make sure we don't try to use a negative number.
-		$new_minor_number                         = $new_minor_number >= 0 ? $new_minor_number : 0;
-		$version_parts[1]                         = $new_minor_number;
-		$version_parts[2]                         = 0; // set patch level of the semver to zero.
-		$previous_minor_release_semver_constraint = '~' . implode( '.', $version_parts );
+		$new_minor_number = $new_minor_number >= 0 ? $new_minor_number : 0;
+		$version_parts[1] = $new_minor_number;
+		// This will look like "5.2", instead of "5.2.0".
+		$previous_minor_version_partial = implode( '.', array_slice( $version_parts, 0, 2 ) );
 
-		$satisfying_versions = Semver::rsort(
-			Semver::satisfiedBy( $this->versions(), $previous_minor_release_semver_constraint )
+		$satisfying_versions = array_filter(
+			$this->versions(),
+			function( $version ) use ( $previous_minor_version_partial ) {
+				return preg_match( "/$previous_minor_version_partial\.[0-9]+$/", $version );
+			}
 		);
 
-		$result = count( $satisfying_versions ) > 0 ? $satisfying_versions[0] : null;
+		$result = array_shift( $satisfying_versions );
 
 		return $result === $latest ? null : $result;
 	}

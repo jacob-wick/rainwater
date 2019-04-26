@@ -1,4 +1,6 @@
 <?php
+namespace FortAwesome;
+
 /**
  * Main plugin class module.
  *
@@ -31,7 +33,7 @@ if ( ! class_exists( 'FontAwesome_V3Mapper' ) ) :
 		/**
 		 * @ignore
 		 */
-		private static $_instance = null;
+		private static $instance = null;
 
 		/**
 		 * Returns the singleton instance of this class.
@@ -43,10 +45,10 @@ if ( ! class_exists( 'FontAwesome_V3Mapper' ) ) :
 		 * @ignore
 		 */
 		public static function instance() {
-			if ( is_null( self::$_instance ) ) {
-				self::$_instance = new self();
+			if ( is_null( self::$instance ) ) {
+				self::$instance = new self();
 			}
-			return self::$_instance;
+			return self::$instance;
 		}
 
 		// phpcs:ignore Generic.Commenting.DocComment.MissingShort
@@ -65,9 +67,9 @@ if ( ! class_exists( 'FontAwesome_V3Mapper' ) ) :
 		private function load_map() {
 			// Don't load again if it's already loaded.
 			if ( is_null( $this->map ) ) {
-				$v3shims_file = trailingslashit( FONTAWESOME_DIR_PATH ) . 'v3shims.yml';
+				require trailingslashit( FONTAWESOME_DIR_PATH ) . 'v3shims.php';
 
-				$this->map = \Spyc::YAMLLoad( $v3shims_file );
+				$this->map = get_font_awesome_v3shims();
 			}
 		}
 

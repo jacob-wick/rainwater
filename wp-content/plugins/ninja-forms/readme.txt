@@ -1,9 +1,9 @@
 === Ninja Forms - The Easy and Powerful Forms Builder ===
 Contributors: wpninjasllc, kstover, jameslaws, kbjohnson90, klhall1987, krmoorhouse, jmcelhaney, wpnzach
 Tags: form, forms, contact form, custom form, form builder, form creator, form manager, form creation, contact forms, custom forms, forms builder, forms creator, forms manager, forms creation, form administration,
-Requires at least: 4.8
-Tested up to: 5.0
-Stable tag: 3.3.21.3
+Requires at least: 4.9
+Tested up to: 5.1
+Stable tag: 3.4.10
 License: GPLv2 or later
 
 Drag and drop fields in an intuitive UI to create contact forms, email subscription forms, order forms, payment forms, send emails and more!
@@ -111,13 +111,94 @@ For help and video tutorials, please visit our website: [Ninja Forms Documentati
 
 == Upgrade Notice ==
 
-= 3.3.21.3 (10 January 2019) =
+= 3.4.10 (15 April 2019) =
 
-*Security:*
+*Bugs:*
 
-* (2.9x) Duplicated previous blind SQL injection patch for our deprecated 2.9x codebase. Many thanks to Plugin Vulnerabilities for reporting that our initial pass missed this.
+* Resolved an issue that caused the form builder to crash when editing forms that had a select list with no options.
 
 == Changelog ==
+
+= 3.4.10 (15 April 2019) =
+
+*Bugs:*
+
+* Resolved an issue that caused the form builder to crash when editing forms that had a select list with no options.
+
+= 3.4.9 (10 April 2019) =
+
+*Bugs:*
+
+* Resolved an issue that sometimes caused submission dates to show inaccurately in the submissions table.
+
+*Changes:*
+
+* We've upgraded our form building experience with realistic field representations!
+
+= 3.4.8 (4 April 2019) =
+
+*Bugs:*
+
+* Corrected an issue that sometimes caused forms with large calculations to not display properly.
+
+= 3.4.7 (3 April 2019) =
+
+*Bugs:*
+
+* Resolved an error that was causing form submission to fail on some php versions.
+
+= 3.4.6 (2 April 2019) =
+
+*Bugs:*
+
+* Resolved several issues that sometimes caused notices to be logged on newer versions of php.
+* Changed the priority of the redirect action so that it should always fire last.
+* Calculations should now have more consistent results when numbers are input in international formats.
+
+*Changes:*
+
+* The following field types have been deprecated: Product, Quantity, Shipping, Total.
+
+= 3.4.5 (19 March 2019) =
+
+*Changes:*
+
+* Upgrade to THREE for legacy users will no longer immediately trigger additional required updates.
+* Introducing SendWP - A dedicated WordPress email solution!
+
+= 3.4.4 (13 February 2019) =
+
+*Bugs:*
+
+* Resolved an issue that was sometimes causing the submission sequence to reset.
+
+= 3.4.3 (5 February 2019) =
+
+*Bugs:*
+
+* Resolved an issue that was causing some form imports to fail.
+* Submission exports of checkbox fields that have been modified by an admin should now display their proper value in the csv.
+* Resolved an issue that was rarely causing actions to fire twice.
+
+= 3.4.2 (17 January 2019) =
+
+*Bugs:*
+
+* Resolved an issue that sometimes caused fields to not appear on the form after publish. (Special thanks to Tim de Hoog and Sidekick-IT).
+
+= 3.4.1 (15 January 2019) =
+
+*Bugs:*
+
+* Corrected an error that was causing form duplication to fail.
+* Sites with WP_DEBUG enabled should no longer display an undefined 'maintenance' column error on form load.
+
+= 3.4.0 (14 January 2019) =
+
+*Changes:*
+
+* Implemented a new import process, which should be more reliable with large form imports.
+* Upgraded our data structure to reduce loading times for forms and the form builder.
 
 = 3.3.21.3 (10 January 2019) =
 
